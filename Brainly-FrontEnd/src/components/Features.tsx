@@ -1,6 +1,5 @@
-
 import { Link2, Twitter, FileText, Search, Tag, Share2 } from 'lucide-react';
- 
+import React from 'react';
 
 const features = [
   {
@@ -51,9 +50,9 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 transform hover:scale-105"
             >
-              <feature.icon className="w-12 h-12 text-indigo-600 mb-4" />
+              <feature.icon className="w-12 h-12 text-indigo-600 mb-4 transition-transform duration-300 transform hover:scale-125" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
             </div>

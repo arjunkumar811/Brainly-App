@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import React from 'react';
 
 interface ButtonProps {
   variant: "primary" | "secondary";

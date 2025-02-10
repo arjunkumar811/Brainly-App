@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../config';
 import axios from 'axios';
 
+
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -38,7 +40,11 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <>
+
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
+   
+       
       <form
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded shadow-md w-96"
@@ -80,6 +86,8 @@ const Signup = () => {
         </button>
       </form>
     </div>
+  
+    </>
   );
 };
 
