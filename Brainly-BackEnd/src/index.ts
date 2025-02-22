@@ -11,7 +11,9 @@ import { random } from './util';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-
+interface AuthRequest extends Request {
+    userId?: string; 
+  }
 
          
 
@@ -120,14 +122,13 @@ if (passwordMatch) {
 });
 
 
-app.post("/api/v1/content", userMiddleware, async (req, res) => {
+app.post("/api/v1/content", userMiddleware, async (req: AuthRequest, res:Response) => {
     const link = req.body.link;
     const type = req.body.type;
     await ContentModel.create({
         link,
         type,
         title: req.body.title,
-        //@ts-ignore
         userId: req.userId,
         tags: []
     })
@@ -138,8 +139,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
 
 })
 
-app.get("/api/v1/content", userMiddleware, async (req, res) => {
-    //@ts-ignore
+app.get("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     const content = await ContentModel.find({
         userId: userId
@@ -150,12 +150,11 @@ app.get("/api/v1/content", userMiddleware, async (req, res) => {
     })
 })
 
-app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
+app.delete("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Response) => {
     const contentId = req.body.contentId;
 
     await ContentModel.deleteMany({
         contentId,
-        //@ts-ignore
         userId: req.userId
     }) 
 
@@ -166,17 +165,15 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
 
 
 
-app.post("/api/v1/brain/:share",  userMiddleware, async (req, res) => {
+app.post("/api/v1/brain/:share",  userMiddleware, async (req: AuthRequest, res: Response) => {
     const share = req.body.share;
     if(share) {
         LinkModel.create({
-            // @ts-ignore
             userId: req.userId,
             hash: random(10)
         })
     } else {
        await LinkModel.deleteOne({
-            // @ts-ignore
             userId: req.userId,
         });
     }
