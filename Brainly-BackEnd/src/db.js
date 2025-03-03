@@ -34,19 +34,19 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LinkModel = exports.ContentModel = exports.UserModel = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
+const mongoose_1 = __importStar(require("mongoose"));
 require('dotenv').config();
-var mongoDbUrl = process.env.MONGODB_URL;
+const mongoDbUrl = process.env.MONGODB_URL;
 if (!mongoDbUrl) {
     throw new Error("MONGODB_URL environment variable is not defined");
 }
 mongoose_1.default.connect(mongoDbUrl);
-var userSchema = new mongoose_1.Schema({
+const userSchema = new mongoose_1.Schema({
     username: { type: String, unique: true },
     password: { type: String, required: true },
 });
 exports.UserModel = (0, mongoose_1.model)("User", userSchema);
-var ContentSchema = new mongoose_1.Schema({
+const ContentSchema = new mongoose_1.Schema({
     title: String,
     link: String,
     tag: [{ type: mongoose_1.default.Types.ObjectId, ref: 'Tag' }],
@@ -54,7 +54,7 @@ var ContentSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.default.Types.ObjectId, ref: 'User', require: true }
 });
 exports.ContentModel = (0, mongoose_1.model)("Content", ContentSchema);
-var LinkSchema = new mongoose_1.Schema(({
+const LinkSchema = new mongoose_1.Schema(({
     hash: String,
     userId: { type: mongoose_1.default.Types.ObjectId, ref: 'User', required: true, unique: true },
 }));
