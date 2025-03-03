@@ -2,8 +2,7 @@ import { Sidebaritem } from "./Sidebaritem";
 import { TwitterIcon } from './../icons/TwitterIcon';
 import { YouTubeIcon } from './../icons/YouTubeIcon';
 import { BrainIcon } from "../icons/BrainIcon";
-import React from 'react';
- 
+
 
 export function SideBar() {
     return <div className="h-screen bg-white border-r w-72 fixed left-0 top-0 text-black">

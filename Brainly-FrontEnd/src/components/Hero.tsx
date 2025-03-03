@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import FeatureInputs from './HomeInput';
 
 const Hero: React.FC = () => {

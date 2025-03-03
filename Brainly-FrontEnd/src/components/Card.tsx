@@ -3,7 +3,7 @@
 import { ShareIcon } from './../icons/ShareIcon';
 import { NoteBookIcon } from './../icons/NoteBookIcon';
 import { DeleteIcon } from './../icons/DeleteIcon';
-import React from 'react';
+
  
 interface CardProps {
     title: string;

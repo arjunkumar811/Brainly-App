@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GoBackButton } from './../icons/GoBackButton';
 import { Logo } from '../icons/Logo';
 
 interface HeaderProps {
@@ -10,7 +9,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ toggleTheme }) => {
     return (
       
-        <div className="flex justify-between p-5 justify-center items-center">
+        <div className="flex justify-between p-5 items-center">
             <div className="logo text-3xl font-bold flex ">
                      {<Logo/>}
           <span className='flex justify-center items-center'>Second Brain</span>  

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button } from '../components/Button';
 
 import { PlusIcon } from '../icons/PlushIcon';

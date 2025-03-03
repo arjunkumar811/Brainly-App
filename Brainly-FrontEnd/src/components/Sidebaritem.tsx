@@ -1,5 +1,5 @@
 
-import React from 'react';
+
  
 export function Sidebaritem ({icon, text}) {
 return <div className="flex
