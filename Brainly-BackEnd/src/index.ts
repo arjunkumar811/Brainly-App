@@ -1,14 +1,13 @@
 
 import { Request, Response } from 'express';
 import express from 'express';
-import { string, z } from 'zod'; 
-import bcrypt, { hash } from 'bcrypt';
+import { z } from 'zod'; 
+import bcrypt from 'bcrypt';
 import { ContentModel, LinkModel, UserModel } from './db';
 import jwt from "jsonwebtoken";
 import { JWT_Token_pass } from './config';
 import { userMiddleware } from './middleware';
 import { random } from './util';
-import mongoose from 'mongoose';
 import cors from 'cors';
 
 interface AuthRequest extends Request {
@@ -40,6 +39,7 @@ if(!parseDataWithSuccess.success) {
         message: "Incorrect data format",
         error: parseDataWithSuccess.error,
     });
+    return
 }
 
 const {username, password, firstName, lastName} = req.body;
@@ -69,13 +69,13 @@ const hashedPassword = await bcrypt.hash(password, 10);
 
 app.post("/api/v1/signin", async (req: Request, res: Response): Promise<void> => {
 const requireBody = z.object({
-    username: z.string().email(),
+    username: z.string().min(5),
     password: z.string().min(6),
 });
 
 const parseDataWithSuccess = requireBody.safeParse(req.body);
 
-if(!parseDataWithSuccess) {
+if(!parseDataWithSuccess.success) {
      res.status(400).json({
         message: "Incorrect Cridential",
     });
@@ -109,7 +109,7 @@ if (passwordMatch) {
         id: Find._id
     }, JWT_Token_pass as string,
 );
-// { expiresIn: "1h" }
+ { expiresIn: "1h" }
     res.status(200).json({
         token,
     });
@@ -154,7 +154,7 @@ app.delete("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Resp
     const contentId = req.body.contentId;
 
     await ContentModel.deleteMany({
-        contentId,
+       _id: contentId,
         userId: req.userId
     }) 
 
@@ -166,9 +166,9 @@ app.delete("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Resp
 
 
 app.post("/api/v1/brain/:share",  userMiddleware, async (req: AuthRequest, res: Response) => {
-    const share = req.body.share;
+    const share = req.params.share;
     if(share) {
-        LinkModel.create({
+     await LinkModel.create({
             userId: req.userId,
             hash: random(10)
         })

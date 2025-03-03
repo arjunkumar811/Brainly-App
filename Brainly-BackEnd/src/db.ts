@@ -1,4 +1,6 @@
-import mongoose, { model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
+
 require('dotenv').config();
 
 const mongoDbUrl: string | undefined = process.env.MONGODB_URL;

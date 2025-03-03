@@ -26,6 +26,7 @@ app.post("/api/v1/signup", async (req, res) => {
             message: "Incorrect data format",
             error: parseDataWithSuccess.error,
         });
+        return;
     }
     const { username, password, firstName, lastName } = req.body;
     const hashedPassword = await bcrypt_1.default.hash(password, 10);
@@ -46,11 +47,11 @@ app.post("/api/v1/signup", async (req, res) => {
 });
 app.post("/api/v1/signin", async (req, res) => {
     const requireBody = zod_1.z.object({
-        username: zod_1.z.string().email(),
+        username: zod_1.z.string().min(5),
         password: zod_1.z.string().min(6),
     });
     const parseDataWithSuccess = requireBody.safeParse(req.body);
-    if (!parseDataWithSuccess) {
+    if (!parseDataWithSuccess.success) {
         res.status(400).json({
             message: "Incorrect Cridential",
         });
@@ -77,7 +78,9 @@ app.post("/api/v1/signin", async (req, res) => {
         const token = jsonwebtoken_1.default.sign({
             id: Find._id
         }, config_1.JWT_Token_pass);
-        // { expiresIn: "1h" }
+        {
+            expiresIn: "1h";
+        }
         res.status(200).json({
             token,
         });
@@ -114,7 +117,7 @@ app.get("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
 app.delete("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
     const contentId = req.body.contentId;
     await db_1.ContentModel.deleteMany({
-        contentId,
+        _id: contentId,
         userId: req.userId
     });
     res.json({
@@ -122,9 +125,9 @@ app.delete("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
     });
 });
 app.post("/api/v1/brain/:share", middleware_1.userMiddleware, async (req, res) => {
-    const share = req.body.share;
+    const share = req.params.share;
     if (share) {
-        db_1.LinkModel.create({
+        await db_1.LinkModel.create({
             userId: req.userId,
             hash: (0, util_1.random)(10)
         });
