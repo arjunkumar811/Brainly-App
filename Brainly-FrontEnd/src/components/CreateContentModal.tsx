@@ -4,7 +4,7 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
-import { Card } from './Card';
+import { useRef, useState } from "react";
 
 enum ContentType {
     Youtube = "youtube",

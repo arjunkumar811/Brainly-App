@@ -1,6 +1,6 @@
 import { Sidebaritem } from "./Sidebaritem";
-import { TwitterIcon } from './../icons/TwitterIcon';
-import { YouTubeIcon } from './../icons/YouTubeIcon';
+import { TwitterIcon } from '../icons/TwitterIcon';
+import { YouTubeIcon } from '../icons/YouTubeIcon';
 import { BrainIcon } from "../icons/BrainIcon";
 
 

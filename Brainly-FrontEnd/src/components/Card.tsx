@@ -1,8 +1,8 @@
 
 
 import { ShareIcon } from './../icons/ShareIcon';
-import { NoteBookIcon } from './../icons/NoteBookIcon';
-import { DeleteIcon } from './../icons/DeleteIcon';
+import { NoteBookIcon } from '../icons/NoteBookIcon';
+import { DeleteIcon } from '../icons/DeleteIcon';
 
  
 interface CardProps {
