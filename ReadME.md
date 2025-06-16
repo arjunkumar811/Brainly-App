@@ -11,7 +11,7 @@ Brainly is a full-stack web application built to help users store, organize, and
 - **Frontend:** React, TypeScript, Tailwind CSS, React Router Dom
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
-- **Validation:** Zod
+- **Validation:** Zod,Hashing, salting 
 
 ---
 
