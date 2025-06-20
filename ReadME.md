@@ -64,6 +64,3 @@ Brainly is a full-stack web application built to help users store, organize, and
 
 ---
 
-
-### **Caption:**
-"Your Digital Brain for Everything Important - Store, organize, and access all your important links, tweets, and documents in one place. Never lose valuable information again."
