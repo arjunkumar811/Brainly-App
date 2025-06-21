@@ -57,7 +57,7 @@ Brainly is a full-stack web application built to help users store, organize, and
    # Start the frontend development server
    cd ../Brainly-Frontend
    npm run dev
-   ```
+
 
 5. Open the application:
    Navigate to `http://localhost:PORT` in your browser.
