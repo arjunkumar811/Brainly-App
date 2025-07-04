@@ -13,8 +13,7 @@ Brainly is a full-stack web application built to help users store, organize, and
 - **Database:** MongoDB
 - **Validation:** Zod,Hashing, salting 
 
----
-
+--
 
 ## **Getting Started**
 
