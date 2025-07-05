@@ -59,4 +59,4 @@ Brainly is a full-stack web application built to help users store, organize, and
 
 
 5. Open the application:
-   Navigate to `http://localhost:PORT` in your browser.
+   Navigate to `http://localhost:PORT` in your browser
