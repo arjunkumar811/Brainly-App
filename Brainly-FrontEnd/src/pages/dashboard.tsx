@@ -9,7 +9,9 @@ import { Card } from './../components/Card';
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
 
-type FilterType = 'all' | 'youtube' | 'twitter';
+type FilterType = 'all' | 'youtube' | 'twitter' | 'instagram' | 'linkedin' | 'facebook' | 'tiktok' | 'reddit' | 
+                  'github' | 'stackoverflow' | 'medium' | 'devto' | 'vimeo' | 'twitch' | 'podcast' | 
+                  'googledocs' | 'notion' | 'evernote' | 'pinterest' | 'dribbble' | 'behance';
 
 export function DashBoard() {
 const [modelOpen, setModelOpen] = useState(false);
@@ -38,6 +40,24 @@ const stats = useMemo(() => {
     total: content.length,
     youtube: content.filter((item: any) => item.type === 'youtube').length,
     twitter: content.filter((item: any) => item.type === 'twitter').length,
+    instagram: content.filter((item: any) => item.type === 'instagram').length,
+    linkedin: content.filter((item: any) => item.type === 'linkedin').length,
+    facebook: content.filter((item: any) => item.type === 'facebook').length,
+    tiktok: content.filter((item: any) => item.type === 'tiktok').length,
+    reddit: content.filter((item: any) => item.type === 'reddit').length,
+    github: content.filter((item: any) => item.type === 'github').length,
+    stackoverflow: content.filter((item: any) => item.type === 'stackoverflow').length,
+    medium: content.filter((item: any) => item.type === 'medium').length,
+    devto: content.filter((item: any) => item.type === 'devto').length,
+    vimeo: content.filter((item: any) => item.type === 'vimeo').length,
+    twitch: content.filter((item: any) => item.type === 'twitch').length,
+    podcast: content.filter((item: any) => item.type === 'podcast').length,
+    googledocs: content.filter((item: any) => item.type === 'googledocs').length,
+    notion: content.filter((item: any) => item.type === 'notion').length,
+    evernote: content.filter((item: any) => item.type === 'evernote').length,
+    pinterest: content.filter((item: any) => item.type === 'pinterest').length,
+    dribbble: content.filter((item: any) => item.type === 'dribbble').length,
+    behance: content.filter((item: any) => item.type === 'behance').length,
   };
 }, [content]);
 
