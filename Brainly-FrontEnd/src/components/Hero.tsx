@@ -1,14 +1,14 @@
 import React from 'react';
-import FeatureInputs from './HomeInput';
+import dashboardPreview from '../assets/Screenshot 2025-11-03 235501.png';
 
 const Hero: React.FC = () => {
     return (
-        <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 py-20 px-4">
+        <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 py-12 px-4">
             <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
             
-            <div className="max-w-5xl mx-auto relative z-10">
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm mb-6 border border-purple-200">
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm mb-4 border border-purple-200">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
@@ -16,7 +16,7 @@ const Hero: React.FC = () => {
                         <span className="text-sm font-medium text-gray-700">Your Second Brain is Here</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
                         <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
                             Store, Organize,
                         </span>
@@ -26,11 +26,11 @@ const Hero: React.FC = () => {
                         <span className="text-gray-900">Efficiently.</span>
                     </h1>
 
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6">
                         Your digital companion to capture, organize, and recall your ideas and memories across all platforms.
                     </p>
 
-                    <div className="flex flex-wrap justify-center gap-3 mb-12">
+                    <div className="flex flex-wrap justify-center gap-3 mb-8">
                         <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
                             <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -55,7 +55,27 @@ const Hero: React.FC = () => {
                     </div>
                 </div>
 
-                <FeatureInputs />
+                {/* Demo Section */}
+                <div className="mt-8">
+                    <div className="text-center mb-6">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                            See It In Action
+                        </h2>
+                        <p className="text-base text-gray-600">
+                            Manage all your content from 20+ platforms in one beautiful dashboard
+                        </p>
+                    </div>
+                    <div className="relative max-w-6xl mx-auto">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-500 rounded-2xl blur-2xl opacity-20"></div>
+                        <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-white">
+                            <img 
+                                src={dashboardPreview} 
+                                alt="Second Brain Dashboard - Content Management Interface" 
+                                className="w-full h-auto"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
