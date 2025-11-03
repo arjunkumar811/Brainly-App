@@ -21,46 +21,65 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (req: Request, res: Response) => {
+    res.json({ message: "Brainly API is running" });
+});
+
 
 
 app.post("/api/v1/signup", async (req: Request, res: Response): Promise<void> => {
    
     const requireBody = z.object({
-        username: z.string().min(5),
-        password: z.string().min(5),
+        email: z.string().email(),
+        password: z.string().min(6),
+        name: z.string().min(2),
     });
     
+    const parseDataWithSuccess = requireBody.safeParse(req.body);
 
+    if(!parseDataWithSuccess.success) {
+        res.status(400).json({
+            message: "Invalid input",
+            error: parseDataWithSuccess.error,
+        });
+        return
+    }
 
-const parseDataWithSuccess = requireBody.safeParse(req.body);
-
-if(!parseDataWithSuccess.success) {
-    res.status(400).json({
-        message: "Incorrect data format",
-        error: parseDataWithSuccess.error,
-    });
-    return
-}
-
-const {username, password, firstName, lastName} = req.body;
-const hashedPassword = await bcrypt.hash(password, 10);
-
+    const {email, password, name} = req.body;
 
     try {
-   await UserModel.create ({
-    username: username,
-    password: hashedPassword,
-   });
+        const existingUser = await UserModel.findOne({ email });
+        
+        if (existingUser) {
+            res.status(400).json({
+                message: "User already exists. Please sign in.",
+            });
+            return;
+        }
 
-   res.status(200).json({
-    message: "User signed up",
-   });
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-}  catch (e) {
-    res.status(411).json({
-        message: "user already exist",   
-   });
-}
+        const user = await UserModel.create ({
+            email: email,
+            password: hashedPassword,
+            name: name,
+        });
+
+        const token = jwt.sign({
+            id: user._id
+        }, JWT_Token_pass, { expiresIn: "7d" });
+
+        res.status(201).json({
+            token,
+            user: { id: user._id, email: user.email, name: user.name },
+            message: "User created successfully",
+        });
+
+    } catch (e) {
+        res.status(500).json({
+            message: "Error creating user",   
+        });
+    }
 
 })  
 
@@ -68,57 +87,55 @@ const hashedPassword = await bcrypt.hash(password, 10);
 
 
 app.post("/api/v1/signin", async (req: Request, res: Response): Promise<void> => {
-const requireBody = z.object({
-    username: z.string().min(5),
-    password: z.string().min(6),
-});
-
-const parseDataWithSuccess = requireBody.safeParse(req.body);
-
-if(!parseDataWithSuccess.success) {
-     res.status(400).json({
-        message: "Incorrect Cridential",
+    const requireBody = z.object({
+        email: z.string().email(),
+        password: z.string().min(6),
     });
-    return;
-}
 
-const {username, password} = req.body;
+    const parseDataWithSuccess = requireBody.safeParse(req.body);
 
-const Find = await UserModel.findOne({
-    username
-});
+    if(!parseDataWithSuccess.success) {
+        res.status(400).json({
+            message: "Invalid input",
+        });
+        return;
+    }
 
-if(!Find) {
-     res.status(403).json({
-        message: "Invalid Credentials!",
-    });
-    return;
-}
+    const {email, password} = req.body;
 
-const passwordMatch = await bcrypt.compare(password, Find.password);
+    try {
+        const user = await UserModel.findOne({ email });
 
-if (!passwordMatch) {
-   res.status(403).json({
-        message: "Invalid Credentials!",
-    });
-    return;
-}
+        if(!user) {
+            res.status(400).json({
+                message: "User not found. Please sign up.",
+            });
+            return;
+        }
 
-if (passwordMatch) {
-    const token = jwt.sign({
-        id: Find._id
-    }, JWT_Token_pass as string,
-);
- { expiresIn: "1h" }
-    res.status(200).json({
-        token,
-    });
-} else {
-    res.status(403).json({
-        message: "Invalid Credentials!",
-});
-}
+        const passwordMatch = await bcrypt.compare(password, user.password);
 
+        if (!passwordMatch) {
+            res.status(400).json({
+                message: "Invalid credentials",
+            });
+            return;
+        }
+
+        const token = jwt.sign({
+            id: user._id
+        }, JWT_Token_pass, { expiresIn: "7d" });
+
+        res.status(200).json({
+            token,
+            user: { id: user._id, email: user.email, name: user.name },
+            message: "Signed in successfully",
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: "Error signing in",
+        });
+    }
 });
 
 
@@ -143,7 +160,7 @@ app.get("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Respons
     const userId = req.userId;
     const content = await ContentModel.find({
         userId: userId
-    }).populate("userId", "username");
+    }).populate("userId", "name email");
 
     res.json({
         content
@@ -214,10 +231,13 @@ if(!user) {
 
 
     res.json({
-      username: user.username,
+      name: user.name,
+      email: user.email,
       content: content
     })
 
 })
 
-app.listen(3000);
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+});

@@ -3,6 +3,8 @@
     "target": "ESNext",
     "module": "CommonJS",
     "lib": ["ESNext", "ES2015", "DOM"],
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": false,
     "moduleResolution": "Node",
     "esModuleInterop": true,

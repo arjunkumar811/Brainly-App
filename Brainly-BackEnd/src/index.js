@@ -17,77 +17,88 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.post("/api/v1/signup", async (req, res) => {
     const requireBody = zod_1.z.object({
-        username: zod_1.z.string().min(5),
-        password: zod_1.z.string().min(5),
+        email: zod_1.z.string().email(),
+        password: zod_1.z.string().min(6),
+        name: zod_1.z.string().min(2),
     });
     const parseDataWithSuccess = requireBody.safeParse(req.body);
     if (!parseDataWithSuccess.success) {
         res.status(400).json({
-            message: "Incorrect data format",
+            message: "Invalid input",
             error: parseDataWithSuccess.error,
         });
         return;
     }
-    const { username, password, firstName, lastName } = req.body;
-    const hashedPassword = await bcrypt_1.default.hash(password, 10);
+    const { email, password, name } = req.body;
     try {
-        await db_1.UserModel.create({
-            username: username,
+        const existingUser = await db_1.UserModel.findOne({ email });
+        if (existingUser) {
+            res.status(400).json({
+                message: "User already exists. Please sign in.",
+            });
+            return;
+        }
+        const hashedPassword = await bcrypt_1.default.hash(password, 10);
+        const user = await db_1.UserModel.create({
+            email: email,
             password: hashedPassword,
+            name: name,
         });
-        res.status(200).json({
-            message: "User signed up",
+        const token = jsonwebtoken_1.default.sign({
+            id: user._id
+        }, config_1.JWT_Token_pass, { expiresIn: "7d" });
+        res.status(201).json({
+            token,
+            user: { id: user._id, email: user.email, name: user.name },
+            message: "User created successfully",
         });
     }
     catch (e) {
-        res.status(411).json({
-            message: "user already exist",
+        res.status(500).json({
+            message: "Error creating user",
         });
     }
 });
 app.post("/api/v1/signin", async (req, res) => {
     const requireBody = zod_1.z.object({
-        username: zod_1.z.string().min(5),
+        email: zod_1.z.string().email(),
         password: zod_1.z.string().min(6),
     });
     const parseDataWithSuccess = requireBody.safeParse(req.body);
     if (!parseDataWithSuccess.success) {
         res.status(400).json({
-            message: "Incorrect Cridential",
+            message: "Invalid input",
         });
         return;
     }
-    const { username, password } = req.body;
-    const Find = await db_1.UserModel.findOne({
-        username
-    });
-    if (!Find) {
-        res.status(403).json({
-            message: "Invalid Credentials!",
-        });
-        return;
-    }
-    const passwordMatch = await bcrypt_1.default.compare(password, Find.password);
-    if (!passwordMatch) {
-        res.status(403).json({
-            message: "Invalid Credentials!",
-        });
-        return;
-    }
-    if (passwordMatch) {
-        const token = jsonwebtoken_1.default.sign({
-            id: Find._id
-        }, config_1.JWT_Token_pass);
-        {
-            expiresIn: "1h";
+    const { email, password } = req.body;
+    try {
+        const user = await db_1.UserModel.findOne({ email });
+        if (!user) {
+            res.status(400).json({
+                message: "User not found. Please sign up.",
+            });
+            return;
         }
+        const passwordMatch = await bcrypt_1.default.compare(password, user.password);
+        if (!passwordMatch) {
+            res.status(400).json({
+                message: "Invalid credentials",
+            });
+            return;
+        }
+        const token = jsonwebtoken_1.default.sign({
+            id: user._id
+        }, config_1.JWT_Token_pass, { expiresIn: "7d" });
         res.status(200).json({
             token,
+            user: { id: user._id, email: user.email, name: user.name },
+            message: "Signed in successfully",
         });
     }
-    else {
-        res.status(403).json({
-            message: "Invalid Credentials!",
+    catch (e) {
+        res.status(500).json({
+            message: "Error signing in",
         });
     }
 });
@@ -109,7 +120,7 @@ app.get("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
     const userId = req.userId;
     const content = await db_1.ContentModel.find({
         userId: userId
-    }).populate("userId", "username");
+    }).populate("userId", "name email");
     res.json({
         content
     });
@@ -165,7 +176,8 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
         return;
     }
     res.json({
-        username: user.username,
+        name: user.name,
+        email: user.email,
         content: content
     });
 });
