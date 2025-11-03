@@ -4,6 +4,11 @@ import { BACKEND_URL } from "../config";
 
 export function useContent() {
     const [content, setContent] = useState([]);
+    const [refresh, setRefresh] = useState(0);
+
+    const refreshContent = () => {
+        setRefresh(prev => prev + 1);
+    };
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/content`, {
@@ -17,7 +22,7 @@ export function useContent() {
             .catch((error) => {
                 console.error("Error fetching content:", error);
             });
-    }, []);
+    }, [refresh]);
 
-    return content;
+    return { content, refreshContent };
 }

@@ -1,49 +1,171 @@
-
-
 import { ShareIcon } from './../icons/ShareIcon';
 import { NoteBookIcon } from '../icons/NoteBookIcon';
 import { DeleteIcon } from '../icons/DeleteIcon';
+import { YouTubeIcon } from '../icons/YouTubeIcon';
+import { TwitterIcon } from '../icons/TwitterIcon';
 
- 
 interface CardProps {
     title: string;
     link: string;
-    type: "twitter" | "youtype"
+    type: "twitter" | "youtube";
+    contentId: string;
+    onDelete: (contentId: string) => void;
 }
 
+const getYouTubeVideoId = (url: string) => {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
+};
 
-export function Card({title, link, type}: CardProps) {
-    return <div>
-     <div className=" p-8 bg-white rounded-md outline-slate-200  border border-gray-200  min-h-48">
-   
-<div className="flex justify-between ">
-    <div className="flex items-center text-md">
+const getTweetId = (url: string) => {
+    const match = url.match(/status\/(\d+)/);
+    return match ? match[1] : null;
+};
 
-        <div className='text-gray-500 pr-2'><NoteBookIcon /></div>
-        {title}
-    </div>
-    <div className="flex items-center">
-       <div className='pr-2 text-gray-500'  >
-        <a href={link} target='_blank'>
-         <ShareIcon />
-         </a>
-         </div>
+const getTweetScreenshot = (url: string) => {
+    return `https://api.pikwy.com/?url=${encodeURIComponent(url)}&w=800&h=600`;
+};
 
-        <div className='text-gray-500'><DeleteIcon /></div>
-    </div>
-</div>
+export function Card({title, link, type, contentId, onDelete}: CardProps) {
+    const videoId = type === "youtube" ? getYouTubeVideoId(link) : null;
+    const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+    const tweetId = type === "twitter" ? getTweetId(link) : null;
 
-<div className="pt-4">
-    {type === "youtype" && <iframe className='w-full' src= {link.replace("watch?v=", "embed/")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe> }
+    const handleCardClick = () => {
+        window.open(link, '_blank');
+    };
 
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this content?')) {
+            onDelete(contentId);
+        }
+    };
 
-{type === "twitter" && <blockquote className=" twitter-tweet">
-  <a href={link.replace("x.com", "twitter.com")}></a> 
-</blockquote>   }
+    return (
+        <div className="group">
+            <div 
+                onClick={handleCardClick}
+                className="bg-white rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 overflow-hidden flex flex-col h-full cursor-pointer"
+            >
+                {type === "youtube" && thumbnailUrl && (
+                    <div className="relative w-full aspect-video overflow-hidden bg-black">
+                        <img 
+                            src={thumbnailUrl} 
+                            alt={title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                        
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="bg-red-600 rounded-full p-4 transform scale-90 group-hover:scale-100 opacity-90 group-hover:opacity-100 transition-all duration-300 shadow-2xl">
+                                <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </div>
+                        </div>
 
+                        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded font-semibold">
+                            YouTube
+                        </div>
+                    </div>
+                )}
 
-</div>
-</div>
+                {type === "twitter" && tweetId && (
+                    <div className="relative w-full aspect-video overflow-hidden bg-black">
+                        <img 
+                            src={`https://unavatar.io/twitter/${tweetId}`}
+                            alt={title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                    parent.innerHTML = `
+                                        <div class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center p-8">
+                                            <div class="text-center text-white">
+                                                <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                                </svg>
+                                                <h3 class="text-lg font-bold mb-2">${title}</h3>
+                                                <p class="text-sm text-blue-100">Click to view on Twitter</p>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                        
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div className="bg-blue-500 rounded-full p-4 transform scale-90 group-hover:scale-100 transition-all duration-300 shadow-2xl">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                </svg>
+                            </div>
+                        </div>
 
-    </div>
+                        <div className="absolute bottom-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                            Twitter
+                        </div>
+                    </div>
+                )}
+
+                <div className="p-4 flex flex-col flex-1 group-hover:bg-gray-50 transition-colors duration-300">
+                    <div className="flex gap-3 mb-3">
+                        <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${type === "youtube" ? "bg-red-100" : "bg-blue-100"}`}>
+                            {type === "youtube" ? (
+                                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                </svg>
+                            )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm leading-snug mb-1 group-hover:text-purple-600 transition-colors">{title}</h3>
+                            <p className="text-xs text-gray-500">Saved content</p>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-auto pt-3 border-t border-gray-200 flex items-center justify-between">
+                        <a 
+                            href={link} 
+                            target='_blank' 
+                            rel="noopener noreferrer"
+                            className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 group/link"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            Open
+                        </a>
+                        <div className="flex items-center gap-1">
+                            <button 
+                                className='p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all transform hover:scale-110'
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <ShareIcon />
+                            </button>
+                            <button 
+                                className='p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all transform hover:scale-110'
+                                onClick={handleDelete}
+                            >
+                                <DeleteIcon />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
