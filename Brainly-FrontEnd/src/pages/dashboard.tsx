@@ -17,7 +17,7 @@ export function DashBoard() {
 const [modelOpen, setModelOpen] = useState(false);
 const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 const [searchQuery, setSearchQuery] = useState('');
-const { content, refreshContent } = useContent();
+const { content, refreshContent, isLoading } = useContent();
 
 const filteredContent = useMemo(() => {
   let filtered = content;

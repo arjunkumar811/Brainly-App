@@ -8,13 +8,7 @@ import { LinkedInIcon } from '../icons/LinkedInIcon';
 import { GitHubIcon } from '../icons/GitHubIcon';
 import { RedditIcon } from '../icons/RedditIcon';
 import { MediumIcon } from '../icons/MediumIcon';
-import { useEffect, useRef } from 'react';
-
-declare global {
-    interface Window {
-        twttr: any;
-    }
-}
+import { TwitterCard } from './TwitterCard';
 
 interface CardProps {
     title: string;
@@ -82,50 +76,6 @@ export function Card({title, link, type, contentId, onDelete}: CardProps) {
     const instagramId = type === "instagram" ? getInstagramId(link) : null;
     const githubRepo = type === "github" ? getGitHubRepo(link) : null;
     const platformConfig = getPlatformConfig(type);
-    const tweetRef = useRef<HTMLDivElement>(null);
-    const hasRendered = useRef(false);
-
-    useEffect(() => {
-        if (type === "twitter" && tweetId && tweetRef.current) {
-            if (!hasRendered.current && window.twttr?.widgets) {
-                hasRendered.current = true;
-                tweetRef.current.innerHTML = '';
-                window.twttr.widgets.createTweet(
-                    tweetId,
-                    tweetRef.current,
-                    {
-                        theme: 'light',
-                        conversation: 'none',
-                        cards: 'visible',
-                        width: 550
-                    }
-                );
-            } else if (!window.twttr?.widgets) {
-                // Wait for Twitter script to load
-                const checkTwitter = setInterval(() => {
-                    if (window.twttr?.widgets && !hasRendered.current) {
-                        hasRendered.current = true;
-                        if (tweetRef.current) {
-                            tweetRef.current.innerHTML = '';
-                            window.twttr.widgets.createTweet(
-                                tweetId,
-                                tweetRef.current,
-                                {
-                                    theme: 'light',
-                                    conversation: 'none',
-                                    cards: 'visible',
-                                    width: 550
-                                }
-                            );
-                        }
-                        clearInterval(checkTwitter);
-                    }
-                }, 100);
-                
-                return () => clearInterval(checkTwitter);
-            }
-        }
-    }, [type, tweetId]);
 
     const handleCardClick = () => {
         window.open(link, '_blank');
@@ -172,75 +122,85 @@ export function Card({title, link, type, contentId, onDelete}: CardProps) {
                 )}
 
                 {type === "twitter" && tweetId && (
-                    <div className="relative w-full bg-white">
-                        <div 
-                            ref={tweetRef} 
-                            className="w-full flex justify-center"
-                        />
-                        <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded font-semibold z-10">
-                            Twitter
-                        </div>
+                    <div className="relative w-full bg-white min-h-[200px]">
+                        <TwitterCard tweetId={tweetId} link={link} />
                     </div>
                 )}
 
                 {type === "instagram" && instagramId && (
-                    <div className="relative w-full bg-gradient-to-br from-purple-400 via-pink-500 to-red-400 p-8">
-                        <div className="bg-white rounded-lg p-4 text-center">
-                            <InstagramIcon />
-                            <p className="text-sm text-gray-600 mt-2">Instagram Post</p>
-                            <p className="text-xs text-gray-500 mt-1">{instagramId}</p>
-                        </div>
-                        <div className="absolute top-2 right-2 bg-pink-600 text-white text-xs px-2 py-1 rounded font-semibold z-10">
+                    <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-purple-400 via-pink-500 to-red-400">
+                        <iframe 
+                            src={`https://www.instagram.com/p/${instagramId}/embed/`}
+                            className="w-full h-full"
+                            frameBorder="0"
+                            scrolling="no"
+                            allowTransparency={true}
+                        />
+                        <div className="absolute bottom-2 right-2 bg-pink-600 text-white text-xs px-2 py-1 rounded font-semibold z-10">
                             Instagram
                         </div>
                     </div>
                 )}
 
                 {type === "linkedin" && (
-                    <div className="relative w-full bg-blue-700 p-8">
-                        <div className="bg-white rounded-lg p-4 text-center">
-                            <LinkedInIcon />
-                            <p className="text-sm text-gray-600 mt-2">LinkedIn Post</p>
+                    <div className="relative w-full aspect-video overflow-hidden bg-blue-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center text-white">
+                                <div className="scale-[2] mb-4">
+                                    <LinkedInIcon />
+                                </div>
+                                <p className="text-sm font-semibold">LinkedIn Post</p>
+                            </div>
                         </div>
-                        <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded font-semibold z-10">
+                        <div className="absolute bottom-2 right-2 bg-blue-700 text-white text-xs px-2 py-1 rounded font-semibold">
                             LinkedIn
                         </div>
                     </div>
                 )}
 
                 {type === "github" && githubRepo && (
-                    <div className="relative w-full bg-gray-900 p-6">
-                        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                            <div className="flex items-center gap-2 text-white">
-                                <GitHubIcon />
-                                <span className="font-mono text-sm">{githubRepo}</span>
+                    <div className="relative w-full aspect-video overflow-hidden bg-gray-900">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center text-white p-4">
+                                <div className="scale-[2] mb-4">
+                                    <GitHubIcon />
+                                </div>
+                                <p className="text-sm font-mono">{githubRepo}</p>
                             </div>
                         </div>
-                        <div className="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded font-semibold z-10">
+                        <div className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded font-semibold">
                             GitHub
                         </div>
                     </div>
                 )}
 
                 {type === "reddit" && (
-                    <div className="relative w-full bg-orange-600 p-8">
-                        <div className="bg-white rounded-lg p-4 text-center">
-                            <RedditIcon />
-                            <p className="text-sm text-gray-600 mt-2">Reddit Post</p>
+                    <div className="relative w-full aspect-video overflow-hidden bg-orange-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center text-white">
+                                <div className="scale-[2] mb-4">
+                                    <RedditIcon />
+                                </div>
+                                <p className="text-sm font-semibold">Reddit Post</p>
+                            </div>
                         </div>
-                        <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded font-semibold z-10">
+                        <div className="absolute bottom-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded font-semibold">
                             Reddit
                         </div>
                     </div>
                 )}
 
                 {type === "medium" && (
-                    <div className="relative w-full bg-black p-8">
-                        <div className="bg-white rounded-lg p-4 text-center">
-                            <MediumIcon />
-                            <p className="text-sm text-gray-600 mt-2">Medium Article</p>
+                    <div className="relative w-full aspect-video overflow-hidden bg-black">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center text-white">
+                                <div className="scale-[2] mb-4">
+                                    <MediumIcon />
+                                </div>
+                                <p className="text-sm font-semibold">Medium Article</p>
+                            </div>
                         </div>
-                        <div className="absolute top-2 right-2 bg-gray-900 text-white text-xs px-2 py-1 rounded font-semibold z-10">
+                        <div className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded font-semibold">
                             Medium
                         </div>
                     </div>

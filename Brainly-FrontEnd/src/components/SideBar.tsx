@@ -465,17 +465,5 @@ export function SideBar({ activeFilter, onFilterChange, stats }: SideBarProps) {
   </button>
 </div>
 
-<div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-  <div className="flex items-center gap-3 px-3 py-2">
-    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-white font-semibold">
-      A
-    </div>
-    <div className="flex-1">
-      <p className="text-sm font-semibold text-gray-800">Arjun Kumar</p>
-      <p className="text-xs text-gray-500">arjun@example.com</p>
-    </div>
-  </div>
-</div>
-
     </div>
 }
