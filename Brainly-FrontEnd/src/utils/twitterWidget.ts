@@ -102,11 +102,12 @@ class TwitterWidgetManager {
     public renderTweet(
         tweetId: string,
         container: HTMLElement,
-        options: any = {}
+        options: any = {},
+        onComplete?: () => void
     ): void {
         this.onReady(() => {
             if (window.twttr && window.twttr.widgets && container) {
-                container.innerHTML = ''; // Clear previous content
+                container.innerHTML = '';
                 
                 window.twttr.widgets.createTweet(
                     tweetId,
@@ -119,14 +120,15 @@ class TwitterWidgetManager {
                         ...options
                     }
                 ).then(() => {
-                    // Cache this tweet as rendered
                     this.renderedTweets.add(tweetId);
                     try {
                         localStorage.setItem('rendered_tweets', JSON.stringify(Array.from(this.renderedTweets)));
                     } catch (error) {
-                        // Quota exceeded, clear old cache
                         this.renderedTweets.clear();
                         localStorage.removeItem('rendered_tweets');
+                    }
+                    if (onComplete) {
+                        onComplete();
                     }
                 });
             }
