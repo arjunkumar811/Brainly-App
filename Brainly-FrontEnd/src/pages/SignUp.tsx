@@ -1,95 +1,133 @@
-
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../config';
 import axios from 'axios';
 
-
-
 const Signup = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
+    name: '',
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setError('');
   };
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const { username, password } = formData;
+    const { email, password, name } = formData;
 
-    if (!username || !password) {
-      alert('Please fill in both fields.');
+    if (!email || !password || !name) {
+      setError('Please fill in all fields.');
+      setLoading(false);
       return;
     }
 
     try {
-      await axios.post(`${BACKEND_URL}/api/v1/signup`, { username, password });
-      alert('You have signed up successfully!');
-      navigate('/signin');
-    } catch (error) {
-      alert('Signup failed. Please try again.');
-      console.error('Error during signup:', error);
+      const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, { email, password, name });
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
+    } catch (error: any) {
+      if (error.response?.data?.message === "User already exists. Please sign in.") {
+        navigate('/signin');
+      } else {
+        setError(error.response?.data?.message || 'Signup failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
-   
-       
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-blue-500">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-96"
+        className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="username">
-            Username
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="name">
+            Full Name
           </label>
           <input
             type="text"
-            name="username"
-            id="username"
-            value={formData.username}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+            placeholder="Enter your full name"
           />
         </div>
+
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="email">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+            placeholder="Enter your email"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="password">
             Password
           </label>
           <input
             type="password"
-            name="password"
             id="password"
+            name="password"
             value={formData.password}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+            placeholder="Enter your password"
           />
         </div>
+
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          disabled={loading}
+          className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-200 font-medium disabled:bg-gray-400"
         >
-          Sign Up
+          {loading ? 'Creating Account...' : 'Sign Up'}
         </button>
+
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <button
+            type="button"
+            onClick={() => navigate('/signin')}
+            className="text-purple-600 hover:text-purple-700 font-medium"
+          >
+            Sign In
+          </button>
+        </p>
       </form>
     </div>
-  
-    </>
   );
 };
 
 export default Signup;
-

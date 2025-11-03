@@ -1,83 +1,114 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../config';
 import axios from 'axios';
 
 const Signin = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setError('');
   };
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const { username, password } = formData;
+    const { email, password } = formData;
 
-    if (!username || !password) {
-      alert('Please fill in both fields.');
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, { username, password });
-      alert('You have signed in successfully!');
-      console.log('Token:', response.data.token); // Store the token for authentication
-      navigate('/dashboard'); // Redirect to the dashboard or another page
-    } catch (error) {
-      alert('Signin failed. Please try again.');
-      console.error('Error during signin:', error);
+      const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, { email, password });
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
+    } catch (error: any) {
+      if (error.response?.data?.message === "User not found. Please sign up.") {
+        navigate('/signup');
+      } else {
+        setError(error.response?.data?.message || 'Signin failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-purple-500">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-96"
+        className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Welcome Back</h2>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="username">
-            Username
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="email">
+            Email Address
           </label>
           <input
-            type="text"
-            name="username"
-            id="username"
-            value={formData.username}
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            placeholder="Enter your email"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="password">
             Password
           </label>
           <input
             type="password"
-            name="password"
             id="password"
+            name="password"
             value={formData.password}
             onChange={handleChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            placeholder="Enter your password"
           />
         </div>
+
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 font-medium disabled:bg-gray-400"
         >
-          Sign In
+          {loading ? 'Signing In...' : 'Sign In'}
         </button>
+
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Don''t have an account?{' '}
+          <button
+            type="button"
+            onClick={() => navigate('/signup')}
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Sign Up
+          </button>
+        </p>
       </form>
     </div>
   );
