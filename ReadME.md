@@ -1,5 +1,7 @@
 # Brainly
 
+<img width="1884" height="925" alt="Screenshot 2025-11-03 235501" src="https://github.com/user-attachments/assets/3652abac-b6f8-4d16-b883-a99ec294b18a" />
+
 **Your Digital Brain for Everything Important**
 
 Brainly is a full-stack web application built to help users store, organize, and access their important links, tweets, and documents all in one place. Never lose valuable information again! Share your "second brain" with others effortlessly through unique sharable links.
