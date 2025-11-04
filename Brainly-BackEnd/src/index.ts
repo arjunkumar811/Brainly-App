@@ -182,22 +182,45 @@ app.delete("/api/v1/content", userMiddleware, async (req: AuthRequest, res: Resp
 
 
 
-app.post("/api/v1/brain/:share",  userMiddleware, async (req: AuthRequest, res: Response) => {
-    const share = req.params.share;
-    if(share) {
-     await LinkModel.create({
-            userId: req.userId,
-            hash: random(10)
-        })
-    } else {
-       await LinkModel.deleteOne({
-            userId: req.userId,
+app.post("/api/v1/brain/share",  userMiddleware, async (req: AuthRequest, res: Response) => {
+    const share = req.body.share;
+    
+    try {
+        if(share) {
+            const existingLink = await LinkModel.findOne({
+                userId: req.userId
+            });
+
+            if(existingLink) {
+                res.json({
+                    hash: existingLink.hash
+                });
+                return;
+            }
+
+            const hash = random(10);
+            await LinkModel.create({
+                userId: req.userId,
+                hash: hash
+            });
+
+            res.json({
+                hash: hash
+            });
+        } else {
+            await LinkModel.deleteOne({
+                userId: req.userId,
+            });
+
+            res.json({
+                message: "Share link removed"
+            });
+        }
+    } catch(e) {
+        res.status(500).json({
+            message: "Error creating share link"
         });
     }
-
-    res.json({
-      message: "Removed link"
-    }) 
 })
 
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
