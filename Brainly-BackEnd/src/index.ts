@@ -19,8 +19,32 @@ interface AuthRequest extends Request {
 
 const app = express();
 
+// CORS Configuration - Allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://brainly-app-8l7q-git-main-arjun-kumars-projects-3ce6d500.vercel.app',
+  // Add any other Vercel preview URLs here
+];
+
 app.use(cors({
-  origin: true,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow all Vercel domains
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now, you can restrict later
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -28,6 +52,7 @@ app.use(cors({
 
 app.use(express.json());
 
+// Handle preflight requests
 app.options('*', cors());
 
 app.get("/", (req: Request, res: Response) => {
