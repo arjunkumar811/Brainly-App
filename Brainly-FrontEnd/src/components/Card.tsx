@@ -34,24 +34,9 @@ const getInstagramId = (url: string) => {
     return match ? match[1] : null;
 };
 
-const getLinkedInId = (url: string) => {
-    // LinkedIn posts don't embed easily, we'll just open the link
-    return url;
-};
-
 const getGitHubRepo = (url: string) => {
     const match = url.match(/github\.com\/([\w-]+\/[\w-]+)/);
     return match ? match[1] : null;
-};
-
-const getRedditPost = (url: string) => {
-    const match = url.match(/reddit\.com\/r\/([\w-]+)\/comments\/([\w-]+)/);
-    return match ? { subreddit: match[1], postId: match[2] } : null;
-};
-
-const getMediumArticle = (url: string) => {
-    // Medium articles will just open in a new tab
-    return url;
 };
 
 const getPlatformConfig = (type: string) => {

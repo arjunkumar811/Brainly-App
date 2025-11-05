@@ -19,7 +19,15 @@ interface AuthRequest extends Request {
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://brainly-app-frontend.vercel.app',
+    'https://brainly-app-git-main-arjuns-projects.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true
+}));
 
 app.get("/", (req: Request, res: Response) => {
     res.json({ message: "Brainly API is running" });

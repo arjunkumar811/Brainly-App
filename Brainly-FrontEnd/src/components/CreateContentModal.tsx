@@ -1,6 +1,5 @@
 import { CrossIcon } from "../icons/CrossIcon";
 import { Input } from "./Input";
-import { Button } from "./Button";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useRef, useState } from "react";
