@@ -18,11 +18,17 @@ interface AuthRequest extends Request {
 
 
 const app = express();
-app.use(express.json());
+
 app.use(cors({
   origin: true,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+app.use(express.json());
+
+app.options('*', cors());
 
 app.get("/", (req: Request, res: Response) => {
     res.json({ message: "Brainly API is running" });
