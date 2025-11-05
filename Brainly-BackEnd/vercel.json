@@ -6,16 +6,9 @@
         "use": "@vercel/node"
       }
     ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "src/index.ts",
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-      }
-    ],
     "headers": [
       {
-        "source": "/(.*)",
+        "source": "/api/(.*)",
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
@@ -34,6 +27,12 @@
             "value": "true"
           }
         ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/src/index.ts"
       }
     ]
   }
