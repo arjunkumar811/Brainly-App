@@ -1,5 +1,13 @@
 # Brainly
 
+## 🎥 Demo
+
+https://github.com/user-attachments/assets/4744d528-0282-4a8a-a45d-90aac4856d71
+
+---
+
+## 📸 Screenshots
+
 <img width="1884" height="925" alt="Screenshot 2025-11-03 235501" src="https://github.com/user-attachments/assets/3652abac-b6f8-4d16-b883-a99ec294b18a" />
 
 **Your Digital Brain for Everything Important**
