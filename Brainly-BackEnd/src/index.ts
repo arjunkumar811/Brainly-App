@@ -8,7 +8,15 @@ import jwt from "jsonwebtoken";
 import { JWT_Token_pass } from './config';
 import { userMiddleware } from './middleware';
 import { random } from './util';
+
 import cors from 'cors';
+
+// Define allowed origins for CORS
+const allowedOrigins = [
+    'http://localhost:3000', // local frontend
+    'https://your-frontend-url.vercel.app', // deployed frontend
+    // Add more allowed origins as needed
+];
 
 interface AuthRequest extends Request {
     userId?: string; 
@@ -18,15 +26,6 @@ interface AuthRequest extends Request {
 
 
 const app = express();
-
-// CORS Configuration - Allow multiple origins
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'https://brainly-app-8l7q-git-main-arjun-kumars-projects-3ce6d500.vercel.app',
-  // Add any other Vercel preview URLs here
-];
 
 app.use(cors({
   origin: function (origin, callback) {
