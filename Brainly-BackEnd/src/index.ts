@@ -14,7 +14,8 @@ import cors from 'cors';
 // Define allowed origins for CORS
 const allowedOrigins = [
     'http://localhost:3000', // local frontend
-    'https://your-frontend-url.vercel.app', // deployed frontend
+    'https://brainly-app-r261.vercel.app', // deployed frontend
+    'https://your-frontend-url.vercel.app', // deployed frontend (example)
     // Add more allowed origins as needed
 ];
 
