@@ -2,7 +2,7 @@
 
 ## 🎥 Demo
 
-<video src="https://github.com/user-attachments/assets/4744d528-0282-4a8a-a45d-90aac4856d71" muted autoplay loop playsinline style="width:100%; max-width:800px;"></video>
+<video src="https://github.com/user-attachments/assets/4744d528-0282-4a8a-a45d-90aac4856d71" muted autoplay loop playsinline disableRemotePlayback style="width:100%; max-width:800px;" volume="0"></video>
 
 ---
 
