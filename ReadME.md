@@ -2,7 +2,7 @@
 
 ## 🎥 Demo
 
-https://github.com/user-attachments/assets/4744d528-0282-4a8a-a45d-90aac4856d71
+<video src="https://github.com/user-attachments/assets/4744d528-0282-4a8a-a45d-90aac4856d71" controls muted autoplay loop></video>
 
 ---
 
